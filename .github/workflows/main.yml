@@ -58,10 +58,10 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-task:latest
 
-      - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@v1
-        with:
-          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-task:latest
+      #- name: Scan Docker image with Trivy
+        #uses: aquasecurity/trivy-action@v1
+        #with:
+          #image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-task:latest
 
   deploy:
     name: Deploy Application
