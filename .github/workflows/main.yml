@@ -59,12 +59,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-task:latest .
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/maven-app:latest .
         working-directory: ./spring-boot-app
 
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-task:latest
-
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/maven-app:latest
   deploy:
     name: Deploy Application
     needs: docker-build-push
@@ -78,7 +77,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-task:latest
-            docker stop ci-cd-task || true
-            docker rm ci-cd-task || true
-            docker run -d --name ci-cd-task -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-task:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/maven-app:latest
+            docker stop maven-app || true
+            docker rm maven-app || true
+            docker run -d --name maven-app -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/maven-app:latest

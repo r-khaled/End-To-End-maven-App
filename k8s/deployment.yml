@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-backend-deploy
+  labels:
+    app.kubernetes.io/name: app
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/environment: prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app-backend
+  template:
+    metadata:
+      labels:
+        app: app-backend
+        tier: backend
+        env: prod
+    spec:
+      containers:
+        - name: backend-container
+          image: rogkhaled/maven-app:replaceImageTag
+          ports:
+            - containerPort: 8080
