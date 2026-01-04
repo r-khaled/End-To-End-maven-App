@@ -54,9 +54,11 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-task:latest .
+        working-directory: ./spring-boot-app
 
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-task:latest
+        working-directory: ./spring-boot-app
 
       #- name: Scan Docker image with Trivy
         #uses: aquasecurity/trivy-action@v1
