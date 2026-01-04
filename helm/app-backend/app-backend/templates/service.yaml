@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app-backend.fullname" . }}-svc
+  labels:
+    app.kubernetes.io/name: {{ include "app-backend.name" . }}
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/environment: prod
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ include "app-backend.fullname" . }}-backend
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: 8080
+      protocol: TCP

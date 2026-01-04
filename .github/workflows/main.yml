@@ -65,19 +65,29 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/maven-app:latest
   deploy:
-    name: Deploy Application
+    name: Deploy to Kubernetes
     needs: docker-build-push
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@v0.1.6
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
-          script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/maven-app:latest
-            docker stop maven-app || true
-            docker rm maven-app || true
-            docker run -d --name maven-app -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/maven-app:latest
+          version: 'v1.27.1'
+
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          helm version
+
+      - name: Configure Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install prod-backend helm/app-backend -f helm/app-backend/values.yaml
+

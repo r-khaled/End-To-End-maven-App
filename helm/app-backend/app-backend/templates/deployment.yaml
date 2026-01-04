@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app-backend.fullname" . }}-deploy
+  labels:
+    app.kubernetes.io/name: {{ include "app-backend.name" . }}
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/environment: prod
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "app-backend.fullname" . }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ include "app-backend.fullname" . }}-backend
+        tier: backend
+        env: prod
+    spec:
+      containers:
+        - name: backend-container
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080

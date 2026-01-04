@@ -1,0 +1,12 @@
+# Default values for app-backend.
+# Customize these values as needed.
+replicaCount: 2
+
+image:
+  repository: rogkhaled/maven-app
+  pullPolicy: Always
+  tag: "latest"
+
+service:
+  type: NodePort
+  port: 80
