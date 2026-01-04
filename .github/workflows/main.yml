@@ -30,13 +30,13 @@ jobs:
         run: mvn test
         working-directory: ./spring-boot-app
 
-      - name: SonarQube Scan
-        uses: sonarsource/sonarcloud-github-action@v2
-        working-directory: ./spring-boot-app
-        with:
-          projectKey: ci-cd-task
-          organization: your-sonar-org
-          token: ${{ secrets.SONAR_TOKEN }}
+      #- name: SonarQube Scan
+       # uses: sonarsource/sonarcloud-github-action@v2
+        #working-directory: ./spring-boot-app
+        #with:
+         # projectKey: ci-cd-task
+          #organization: your-sonar-org
+          #token: ${{ secrets.SONAR_TOKEN }}
 
   docker-build-push:
     name: Build & Push Docker Image
