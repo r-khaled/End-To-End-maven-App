@@ -243,15 +243,88 @@ Security is integrated from the earliest stages of development rather than retro
 - **Grafana**: Metrics visualization dashboards
 - **ELK Stack**: Centralized logging (Elasticsearch, Logstash, Kibana)
 
-## How to Deploy
+## Quick Start: Running After Clone
 
-### Prerequisites
+### Prerequisites for Local/Development Setup
+
+- Java 11+ installed on your machine
+- Maven 3.6+ for building the application
+- Docker Desktop installed and running
+- kubectl configured to access an EKS cluster
+- helm 3.x installed for chart management
+- Git configured with SSH or HTTPS credentials
+
+### Getting Started (Local Development)
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/r-khaled/ci-cd-task.git
+   cd ci-cd-task
+   ```
+
+2. **Build the Spring Boot Application**
+   ```bash
+   cd spring-boot-app
+   mvn clean package
+   ```
+
+3. **Run the Application Locally**
+   ```bash
+   java -jar target/spring-boot-web.jar
+   ```
+   The application will be available at `http://localhost:8080`
+
+4. **Build Docker Image Locally**
+   ```bash
+   docker build -t app-backend:latest .
+   ```
+
+5. **Deploy to Local Kubernetes (Minikube or Kind)**
+   ```bash
+   cd ../helm/app-backend
+   helm install app-backend . -f values.yaml
+   kubectl port-forward svc/app-backend 8080:80
+   ```
+
+6. **Verify Deployment**
+   ```bash
+   kubectl get pods
+   kubectl logs -l app.kubernetes.io/name=app-backend
+   kubectl get svc
+   ```
+
+### Running the GitHub Actions CI/CD Pipeline
+
+To trigger the CI/CD pipeline:
+
+1. Push code to the main branch:
+   ```bash
+   git add .
+   git commit -m "feat: update application"
+   git push origin main
+   ```
+
+2. Monitor pipeline execution in GitHub:
+   - Navigate to Actions tab in your repository
+   - View real-time build logs and test results
+   - Confirm SonarQube analysis and Trivy scan results
+
+3. Upon successful completion:
+   - Docker image is pushed to Docker Hub
+   - Helm deployment updates the EKS cluster
+   - Argo CD synchronizes the desired state
+
+---
+
+## How to Deploy to Production
+
+### Prerequisites for Production Deployment
 
 - AWS Account with EKS cluster provisioned via Terraform
-- Docker credentials configured for image pushes
-- GitHub repository with Actions enabled
-- SonarQube server accessible from CI environment
-- Argo CD installed on EKS cluster
+- Docker Hub account with push credentials
+- GitHub Secrets configured (DOCKER_USERNAME, DOCKER_PASSWORD, etc.)
+- SonarQube server accessible from GitHub Actions runners
+- Argo CD installed and configured on EKS cluster
 
 ### Deployment Process (High-Level)
 
