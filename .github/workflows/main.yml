@@ -65,29 +65,25 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/maven-app:latest
   deploy:
-    name: Deploy to Kubernetes
+    name: Deploy Application to EKS
     needs: docker-build-push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up kubectl
+      - name: Setup kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: 'v1.27.1'
+          version: '1.28.0'
 
-      - name: Install Helm
+      - name: Configure kubeconfig
         run: |
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-          helm version
-
-      - name: Configure Kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
-      - name: Deploy with Helm
+      - name: Deploy to EKS
         run: |
-          helm upgrade --install prod-backend helm/app-backend -f helm/app-backend/values.yaml
+          kubectl apply -f k8s/deployment.yml
+          kubectl apply -f k8s/service.yml
+
 
